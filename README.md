@@ -1,12 +1,41 @@
-# React + Vite
+# 🥫 PantryShare – Community Sharing Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A responsive web application built using **React + Vite** that allows users to **share and find leftover food or extra groceries**. It aims to reduce food waste and foster community support through a simple, location-based interface.
 
-Currently, two official plugins are available:
+## Live Demo  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[https://pantry-share.vercel.app/](https://pantry-share.vercel.app/)
 
-## Expanding the ESLint configuration
+## 📂 GitHub Repository  
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project
+[https://github.com/ramyasunarkani/PantryShare](https://github.com/ramyasunarkani/PantryShare)
+
+---
+
+## Features
+
+- **User Authentication** (Firebase)
+- **Google Maps Integration** for geolocation
+- Upload **images** with each item
+- **Post and manage items** (add/edit/delete)
+- Mark items as "Picked up" or "Unavailable"
+- Clean UI with **modals** for interactions
+- **Redux Toolkit** for state management
+
+## Getting Started
+
+To run the project locally, follow these steps:
+
+### 1️ Clone the Repository
+
+[github.com/ramyasunarkani/PantryShare](https://github.com/ramyasunarkani/PantryShare)
+
+cd PantryShare
+
+### 2️ Install Dependencies
+
+npm install
+
+### 3️ Set Up Firebase
+
+create a project in firebase and use your api url and your real time database
