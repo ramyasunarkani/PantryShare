@@ -1,92 +1,99 @@
-import axios from 'axios';
-import { FIREBASE_DB_URL } from './auth-actions'; 
-import { itemActions } from './item-slice';
+import { toast } from "react-toastify";
+import api from "./api";
+import { itemActions } from "./item-slice";
 
-export const addItem = (formData) => {
-  return async (dispatch, getState) => {
-    const state = getState();
-    const token = state.auth.token;
-    const name = state.auth.name;
-    const photo = state.auth.photo;
-    const uid = state.auth.uid;
-
-    if (!token || !uid) {
-      console.error('User not logged in or missing UID');
-      return;
-    }
-
-    const {
-      title,
-      description,
-      tags,
-      image,
-      expiryDate,
-      address,
-    } = formData;
-
+// ✅ Fetch all items
+export const fetchItems = () => {
+  return async (dispatch) => {
     try {
-      const base64Image = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(image);
+      const res = await api.get("/items");
+      dispatch(itemActions.setItems(res.data));
+    } catch (err) {
+      console.error("Failed to fetch items:", err.message);
+    }
+  };
+};
+
+// ✅ Fetch logged-in user's items
+export const fetchUserItems = () => {
+  return async (dispatch) => {
+    try {
+      const res = await api.get("/items/my-items", {
+        headers: { Authorization: localStorage.getItem("token") },
+      });
+      dispatch(itemActions.setUserItems(res.data));
+    } catch (err) {
+      console.error("Failed to fetch user items:", err.message);
+    }
+  };
+};
+
+// ✅ Add new item
+export const addItem = (itemData) => {
+  return async (dispatch) => {
+    try {
+      const form = new FormData();
+      form.append("title", itemData.title);
+      form.append("description", itemData.description);
+      form.append("address", itemData.address || "");
+      form.append("expiryDate", itemData.expiryDate);
+      form.append("tags", JSON.stringify(itemData.tags || []));
+      form.append("location", JSON.stringify(itemData.location || {}));
+
+      if (itemData.image) {
+        form.append("image", itemData.image); // ✅ must match multer key
+      }
+
+      const res = await api.post("/items", form, {
+        headers: {
+          Authorization: localStorage.getItem("token"), // do NOT set Content-Type manually
+        },
       });
 
-      const location = await new Promise((resolve) =>
-        navigator.geolocation.getCurrentPosition(
-          (pos) => resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
-          () => resolve(null)
-        )
-      );
-
-      const itemData = {
-        title,
-        description,
-        imageUrl: base64Image,
-        sharerId: uid,
-        sharerName: name,
-        sharerPhoto: photo,
-        location,
-        address,
-        tags: tags
-          .split(',')
-          .map((tag) => tag.trim().toLowerCase())
-          .filter((tag) => tag !== ''),
-        status: 'available',
-        reservedBy: null,
-        expiryDate: new Date(expiryDate).toISOString(),
-        postedAt: new Date().toISOString(),
-      };
-
-      const res = await axios.post(
-        `${FIREBASE_DB_URL}/nitems.json?auth=${token}`,
-        itemData
-      );
-
-      const itemId = res.data.name;
-
-      await axios.put(
-        `${FIREBASE_DB_URL}/userItems/${uid}/${itemId}.json?auth=${token}`,
-        itemData
-      );
-
-      console.log('Item added successfully!');
-    } catch (error) {
-      console.error('Error adding item:', error);
+      dispatch(itemActions.addItem(res.data.item));
+      toast.success("Item shared successfully!");
+    } catch (err) {
+      console.error("Failed to add item:", err.message);
+      toast.error("Item failed to share!");
     }
   };
 };
 
 
-export const fetchItems = () => {
-    return async (dispatch) => {
-      try {
-        const res = await axios.get(`${FIREBASE_DB_URL}/nitems.json`);
-        const items = res.data || {};
-        dispatch(itemActions.setItems(items));
-      } catch (error) {
-        console.error('Failed to fetch items', error);
-      }
-    };
+// ✅ Update item
+export const updateItem = (id, updatedData) => {
+  return async (dispatch) => {
+    try {
+      const form = new FormData();
+      if (updatedData.title) form.append("title", updatedData.title);
+      if (updatedData.description) form.append("description", updatedData.description);
+      if (updatedData.address) form.append("address", updatedData.address);
+      if (updatedData.expiryDate) form.append("expiryDate", updatedData.expiryDate);
+      if (updatedData.tags) form.append("tags", JSON.stringify(updatedData.tags));
+      if (updatedData.location) form.append("location", JSON.stringify(updatedData.location));
+      if (updatedData.image) form.append("image", updatedData.image);
+
+      const res = await api.put(`/items/${id}`, form, {
+        headers: { Authorization: localStorage.getItem("token") },
+      });
+
+      dispatch(itemActions.updateItem(res.data.item));
+    } catch (err) {
+      console.error("Failed to update item:", err.message);
+    }
   };
-  
+};
+
+// ✅ Delete item
+export const deleteItem = (id) => {
+  return async (dispatch) => {
+    try {
+      await api.delete(`/items/${id}`, {
+        headers: { Authorization: localStorage.getItem("token") },
+      });
+      dispatch(itemActions.deleteItem(id));
+    } catch (err) {
+      console.error("Failed to delete item:", err.message);
+    }
+  };
+};

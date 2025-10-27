@@ -3,10 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialAuthState = {
   userLogged: !!localStorage.getItem('token'),
   token: localStorage.getItem('token') || null,
-  name: localStorage.getItem('name') || '',
-  email: localStorage.getItem('email') || '',
-  photo: localStorage.getItem('photo') || '',
-  uid: localStorage.getItem('uid') || '', 
+  name: '',
+  email: '',
+  photo: '',
+  userId: '',
+  location: { lat: null, lng: null },
 };
 
 const authSlice = createSlice({
@@ -19,13 +20,11 @@ const authSlice = createSlice({
       state.name = action.payload.name;
       state.email = action.payload.email;
       state.photo = action.payload.photo;
-      state.uid = action.payload.uid; 
+      state.userId = action.payload.userId;
+      state.location = action.payload.location || { lat: null, lng: null };
 
+      // Only store token in localStorage
       localStorage.setItem('token', action.payload.token);
-      localStorage.setItem('name', action.payload.name);
-      localStorage.setItem('email', action.payload.email);
-      localStorage.setItem('photo', action.payload.photo);
-      localStorage.setItem('uid', action.payload.uid); 
     },
     logout(state) {
       state.userLogged = false;
@@ -33,17 +32,13 @@ const authSlice = createSlice({
       state.name = '';
       state.email = '';
       state.photo = '';
-      state.uid = ''; 
+      state.userId = '';
+      state.location = { lat: null, lng: null };
 
       localStorage.removeItem('token');
-      localStorage.removeItem('name');
-      localStorage.removeItem('email');
-      localStorage.removeItem('photo');
-      localStorage.removeItem('uid'); 
     },
   },
 });
-
 
 export const authActions = authSlice.actions;
 export default authSlice.reducer;

@@ -1,91 +1,86 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../Store/auth-actions';
-import { useNavigate } from 'react-router-dom';
-import AddItemForm from './AddItemForm';
-import SettingsPanel from './SettingsPanel';
-import Modal from './UI/Modal';
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../Store/auth-actions";
+import { useNavigate } from "react-router-dom";
+import AddItemForm from "./AddItemForm";
+import Modal from "./UI/Modal";
 
 const Sidebar = () => {
-  const user = useSelector((state) => state.auth);
+  const { userLogged, name, email, photo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [modalType, setModalType] = useState(null);
 
-  const [modalType, setModalType] = useState(null); 
-  if (!user.userLogged) return null;
+  if (!userLogged) return null;
 
-  const handleLogOut = () => dispatch(logout());
+  const handleLogOut = () => {
+    dispatch(logout());
+    navigate("/");
+  };
+
   const closeModal = () => setModalType(null);
 
-  return (
-    <div className="flex min-h-screen">
-      <aside className="w-64 bg-white p-4 shadow-lg fixed top-0 left-0 h-full z-40 flex flex-col justify-between">
-        <div>
-          <div className="flex items-center gap-2 border-b pb-4">
-            <img src={user.photo} className="w-10 h-10 rounded-full object-cover" alt="User" />
-            <span className="font-semibold">{user.name}</span>
-          </div>
+  const menuItems = [
+    { label: "Profile", action: () => navigate("/dashboard") },
+    { label: "Browse Items", action: () => navigate("/browse-items") },
+    { label: "Add New Item", action: () => setModalType("add") },
+    { label: "Your Items", action: () => navigate("/dashboard/your-items") },
+    { label: "History", action: () => navigate("/dashboard/history") },
+    { label: "Reservations", action: () => navigate("/dashboard/reservations") },
+  ];
 
-          <div className="flex flex-col gap-2 mt-4">
-            <button
-              onClick={() => navigate('/dashboard/browseItems')}
-              className="hover:bg-gray-100 p-2 rounded text-left"
-            >
-              Browse Items
-            </button>
-            <button
-              onClick={() => setModalType('add')}
-              className="hover:bg-gray-100 p-2 rounded text-left"
-            >
-              Add New Item
-            </button>
-            <button
-              onClick={() => navigate('/dashboard/your-items')}
-              className="hover:bg-gray-100 p-2 rounded text-left"
-            >
-              Your Items
-            </button>
-            <button
-              onClick={() => navigate('/dashboard/history')}
-              className="hover:bg-gray-100 p-2 rounded text-left"
-            >
-              History
-            </button>
-            {/* <button
-              onClick={() => setModalType('settings')}
-              className="hover:bg-gray-100 p-2 rounded text-left"
-            >
-              Settings
-            </button> */}
+  return (
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
+      <aside className="w-full md:w-64 bg-white shadow-lg md:fixed md:top-0 md:left-0 md:h-full flex flex-col justify-between z-50 p-4">
+        <div className="flex flex-col items-center pb-6 border-b mb-4">
+          <div className="avatar mb-2">
+            <div className="w-16 rounded-full ring ring-green-500 ring-offset-base-100 ring-offset-2">
+              <img src={photo || "/avatar.png"} alt="User" />
+            </div>
           </div>
+          <span className="font-semibold text-lg text-gray-800">{name}</span>
+          <span className="text-sm text-gray-500">{email}</span>
         </div>
 
-        <div>
+        <div className="flex flex-col gap-2">
+          {menuItems.map((item, idx) => (
+            <button
+              key={idx}
+              onClick={item.action}
+              className="btn btn-ghost justify-start text-gray-700 hover:text-green-600 hover:bg-green-50 transition-all rounded-xl"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-auto">
           <button
             onClick={handleLogOut}
-            className="hover:bg-red-100 text-red-600 p-2 rounded text-left w-full"
+            className="btn btn-outline btn-error w-full mt-4"
           >
             Logout
           </button>
         </div>
       </aside>
 
-      <main className="flex-1 ml-64 p-6 bg-gray-50 w-full"></main>
+      <main className="flex-1 md:ml-64 p-6">
+      </main>
 
       {modalType && (
         <Modal onClose={closeModal}>
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-semibold">
-              {modalType === 'add' ? 'Add New Item' : 'Settings'}
+          <div className="flex justify-between items-center mb-4 border-b pb-2">
+            <h2 className="text-xl font-semibold text-gray-800">
+              {modalType === "add" ? "Share Your Item" : "Settings"}
             </h2>
             <button
               onClick={closeModal}
-              className="text-gray-500 hover:text-black text-2xl"
+              className="text-gray-500 hover:text-gray-900 text-2xl"
             >
               &times;
             </button>
           </div>
-          {modalType === 'add' ? <AddItemForm /> : <SettingsPanel />}
+          {modalType === "add" && <AddItemForm /> }
         </Modal>
       )}
     </div>
