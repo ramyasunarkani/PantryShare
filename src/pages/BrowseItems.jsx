@@ -15,6 +15,7 @@ const BrowseItems = () => {
   const [userLocation, setUserLocation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showAll, setShowAll] = useState(false);
+  console.log(userLocation)
 
   useEffect(() => {
     dispatch(fetchItems());
@@ -31,6 +32,7 @@ const BrowseItems = () => {
       (error) => console.error("Error getting location:", error)
     );
   }, []);
+  
 
   const handleOpenModal = (item) => setSelectedItem(item);
   const handleCloseModal = () => setSelectedItem(null);
@@ -48,8 +50,7 @@ const BrowseItems = () => {
     handleCloseModal();
   };
 
-  // ✅ Filter items
-  // ✅ Filter items
+  
 const filteredItems = items.filter((item) => {
   const query = searchQuery.toLowerCase();
   const isExpired = new Date(item.expiryDate) < new Date();
@@ -69,6 +70,25 @@ const filteredItems = items.filter((item) => {
 
 
   const GOOGLE_MAPS_API_KEY = "AIzaSyCj1BOABIiLvrvTLpmkvuVi8EQDt_NX9yM";
+  const getDistanceKm = (loc1, loc2) => {
+    const R = 6371; 
+    const dLat = (loc2.lat - loc1.lat) * (Math.PI / 180);
+    const dLng = (loc2.lng - loc1.lng) * (Math.PI / 180);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(loc1.lat * (Math.PI / 180)) *
+        Math.cos(loc2.lat * (Math.PI / 180)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return (R * c).toFixed(2); 
+  };
+
+  const distance =
+    userLocation && selectedItem?.location
+      ? getDistanceKm(userLocation, selectedItem.location)
+      : null;
+
 
   return (
     <>
@@ -78,7 +98,6 @@ const filteredItems = items.filter((item) => {
           Browse Shared Items
         </h2>
 
-        {/* 🔍 Search + Filter */}
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4 mb-10">
           <input
             type="text"
@@ -98,7 +117,6 @@ const filteredItems = items.filter((item) => {
           </label>
         </div>
 
-        {/* 🟢 Items Section */}
         <div className="space-y-6 max-w-4xl mx-auto">
           {!filteredItems.length ? (
             <div className="text-center text-gray-600 mt-10">
@@ -170,8 +188,7 @@ const filteredItems = items.filter((item) => {
         </div>
       </div>
 
-      {/* 🟢 Modal */}
-      {/* 🟢 Modal */}
+   
 {selectedItem && (
   <Modal onClose={handleCloseModal}>
     <div className="p-4">
@@ -226,30 +243,32 @@ const filteredItems = items.filter((item) => {
           : "N/A"}
       </p>
 
-      {/* 🔹 Google Map */}
-      {userLocation && selectedItem.location ? (
-        <div className="my-6">
-          <h4 className="text-lg font-semibold mb-2 text-gray-800">
-            Route to Item Location
-          </h4>
-          <iframe
-            width="100%"
-            height="300"
-            loading="lazy"
-            allowFullScreen
-            referrerPolicy="no-referrer-when-downgrade"
-            src={`https://www.google.com/maps/embed/v1/directions?key=${GOOGLE_MAPS_API_KEY}&origin=${userLocation.lat},${userLocation.lng}&destination=${selectedItem.location.lat},${selectedItem.location.lng}`}
-            className="rounded-md border border-gray-300"
-            title="Google Maps Route"
-          ></iframe>
-        </div>
-      ) : (
+      {userLocation && selectedItem.location ?  (
+  <div className="my-6">
+    <h4 className="text-lg font-semibold mb-2 text-gray-800">
+      Route to Item Location
+    </h4>
+    <p className="text-gray-700 mb-2">
+      Distance: <strong>{distance} km</strong>
+    </p>
+
+    <iframe
+      width="100%"
+      height="300"
+      loading="lazy"
+      allowFullScreen
+      referrerPolicy="no-referrer-when-downgrade"
+      src={`https://www.google.com/maps/embed/v1/directions?key=${GOOGLE_MAPS_API_KEY}&origin=${userLocation.lat},${userLocation.lng}&destination=${selectedItem.location.lat},${selectedItem.location.lng}`}
+      className="rounded-md border border-gray-300"
+      title="Google Maps Route"
+    ></iframe>
+  </div>
+) : (
         <p className="text-gray-500 mt-4">
           Location data not available for this item or user.
         </p>
       )}
 
-      {/* 🔹 Actions */}
       <div className="flex justify-end gap-3 mt-4">
         <button
           onClick={handleCloseModal}

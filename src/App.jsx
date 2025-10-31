@@ -18,8 +18,10 @@ const App = () => {
   const userLogged = useSelector((state) => state.auth.userLogged);
 
   useEffect(() => {
+    if (userLogged) {
     dispatch(fetchProfile());
-  }, [dispatch]);
+  }
+  }, [dispatch,userLogged]);
 
   return (
     <>
