@@ -12,6 +12,8 @@ import History from './components/History';
 import UserProfile from './components/UserProfile';
 import { fetchProfile } from './Store/auth-actions';
 import Reservations from './components/Reservations';
+import ItemDetails from './components/ItemDetails';
+import { setupChatSocketListener } from './Store/chat-actions';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -22,6 +24,12 @@ const App = () => {
     dispatch(fetchProfile());
   }
   }, [dispatch,userLogged]);
+  useEffect(() => {
+    setupChatSocketListener(dispatch);
+    return () => {
+      socket.off("receive_message");
+    };
+  }, [dispatch]);
 
   return (
     <>
@@ -32,10 +40,9 @@ const App = () => {
         <Route path="/login" element={!userLogged ? <Login /> : <Navigate to="/browseItems" />} />
         <Route path="/signup" element={!userLogged ? <SignUp /> : <Navigate to="/browseItems" />} />
 
-        {/* BrowseItems is now a separate page with its own Navbar */}
         <Route path="/browseItems" element={<BrowseItems />} />
+        <Route path="/item/:id" element={<ItemDetails/>} />
 
-        {/* Dashboard routes (after user clicks on profile) */}
         <Route
           path="/dashboard"
           element={userLogged ? <DashBoard /> : <Navigate to="/login" />}
@@ -46,7 +53,6 @@ const App = () => {
           <Route path="reservations" element={<Reservations />} />
         </Route>
 
-        {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>

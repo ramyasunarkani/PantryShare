@@ -2,11 +2,14 @@ import { toast } from "react-toastify";
 import api from "./api";
 import { itemActions } from "./item-slice";
 
-// ✅ Fetch all items
 export const fetchItems = () => {
   return async (dispatch) => {
     try {
-      const res = await api.get("/items");
+      const res = await api.get("/items",{
+        headers: {
+          Authorization: localStorage.getItem("token"), 
+        },
+      });
       dispatch(itemActions.setItems(res.data));
     } catch (err) {
       console.error("Failed to fetch items:", err.message);
@@ -14,7 +17,6 @@ export const fetchItems = () => {
   };
 };
 
-// ✅ Fetch logged-in user's items
 export const fetchUserItems = () => {
   return async (dispatch) => {
     try {
@@ -28,7 +30,6 @@ export const fetchUserItems = () => {
   };
 };
 
-// ✅ Add new item
 export const addItem = (itemData) => {
   return async (dispatch) => {
     try {
@@ -41,12 +42,12 @@ export const addItem = (itemData) => {
       form.append("location", JSON.stringify(itemData.location || {}));
 
       if (itemData.image) {
-        form.append("image", itemData.image); // ✅ must match multer key
+        form.append("image", itemData.image); 
       }
 
       const res = await api.post("/items", form, {
         headers: {
-          Authorization: localStorage.getItem("token"), // do NOT set Content-Type manually
+          Authorization: localStorage.getItem("token"), 
         },
       });
 
@@ -60,7 +61,23 @@ export const addItem = (itemData) => {
 };
 
 
-// ✅ Update item
+export const fetchItemById = (id) => {
+  return async (dispatch) => {
+    try {
+      const res = await api.get(`/items/${id}`, {
+        headers: { Authorization: localStorage.getItem("token") },
+      });
+
+      if (res.data) {
+        dispatch(itemActions.setSingleItem(res.data));
+      }
+    } catch (err) {
+      console.error("Failed to fetch item by ID:", err.message);
+    }
+  };
+};
+
+
 export const updateItem = (id, updatedData) => {
   return async (dispatch) => {
     try {
@@ -84,7 +101,6 @@ export const updateItem = (id, updatedData) => {
   };
 };
 
-// ✅ Delete item
 export const deleteItem = (id) => {
   return async (dispatch) => {
     try {

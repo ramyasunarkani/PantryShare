@@ -4,6 +4,7 @@ const initialState = {
   items: [],
   userItems: [],
   loading: false,
+  selectedItem: null,
 };
 
 const itemSlice = createSlice({
@@ -30,6 +31,9 @@ const itemSlice = createSlice({
     deleteItem(state, action) {
       state.items = state.items.filter((i) => i._id !== action.payload);
       state.userItems = state.userItems.filter((i) => i._id !== action.payload);
+    },
+    setSingleItem(state, action) {
+      state.selectedItem = action.payload; 
     },
   },
 });

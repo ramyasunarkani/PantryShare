@@ -1,12 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUserReservations } from "../Store/reservation-actions";
+import { useNavigate } from "react-router-dom";
+import ChatModal from "../components/ChatModal";
+import { MessageCircle } from "lucide-react";
 
 const History = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { userReservations, loading } = useSelector(
     (state) => state.reservation
   );
+  const { userId, name, email, photo } = useSelector((state) => state.auth);
+
+  const [showChat, setShowChat] = useState(false);
+  const [selectedChatItem, setSelectedChatItem] = useState(null);
 
   useEffect(() => {
     dispatch(fetchUserReservations());
@@ -27,6 +35,11 @@ const History = () => {
       </div>
     );
   }
+
+  const openChat = (item) => {
+    setSelectedChatItem(item);
+    setShowChat(true);
+  };
 
   return (
     <div className="p-4 sm:p-8 max-w-4xl mx-auto">
@@ -85,11 +98,41 @@ const History = () => {
                     ? new Date(r.itemId.expiryDate).toLocaleString()
                     : "N/A"}
                 </p>
+
+                <div className="flex items-center gap-4 mt-3">
+                  <button
+                    onClick={() => navigate(`/item/${r.itemId?._id}`)}
+                    className="text-sm text-emerald-800 font-medium hover:underline"
+                  >
+                    View More
+                  </button>
+
+                  <button
+                    onClick={() => openChat(r.itemId)}
+                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    <MessageCircle size={16} />
+                    Chat with Owner
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {showChat && selectedChatItem && (
+        <ChatModal
+          item={selectedChatItem}
+          currentUser={{
+            _id: userId,
+            fullName: name,
+            email,
+            photoURL: photo,
+          }}
+          closeModal={() => setShowChat(false)}
+        />
+      )}
     </div>
   );
 };

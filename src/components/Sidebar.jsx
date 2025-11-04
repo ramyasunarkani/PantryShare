@@ -30,8 +30,8 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50">
-      <aside className="w-full md:w-64 bg-white shadow-lg md:fixed md:top-0 md:left-0 md:h-full flex flex-col justify-between z-50 p-4">
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-white shadow-lg flex flex-col justify-between p-4 z-50">
+      <div>
         <div className="flex flex-col items-center pb-6 border-b mb-4">
           <div className="avatar mb-2">
             <div className="w-16 rounded-full ring ring-green-500 ring-offset-base-100 ring-offset-2">
@@ -53,19 +53,16 @@ const Sidebar = () => {
             </button>
           ))}
         </div>
+      </div>
 
-        <div className="mt-auto">
-          <button
-            onClick={handleLogOut}
-            className="btn btn-outline btn-error w-full mt-4"
-          >
-            Logout
-          </button>
-        </div>
-      </aside>
-
-      <main className="flex-1 md:ml-64 p-6">
-      </main>
+      <div>
+        <button
+          onClick={handleLogOut}
+          className="btn btn-outline btn-error w-full"
+        >
+          Logout
+        </button>
+      </div>
 
       {modalType && (
         <Modal onClose={closeModal}>
@@ -80,10 +77,10 @@ const Sidebar = () => {
               &times;
             </button>
           </div>
-          {modalType === "add" && <AddItemForm /> }
+          {modalType === "add" && <AddItemForm />}
         </Modal>
       )}
-    </div>
+    </aside>
   );
 };
 
