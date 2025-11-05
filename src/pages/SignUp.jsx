@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import NavBar from '../components/NavBar';
 import { useDispatch } from 'react-redux';
 import { signup } from '../Store/auth-actions';
-import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 const SignUp = () => {
@@ -19,10 +18,9 @@ const SignUp = () => {
     setLoading(true);
     try {
       await dispatch(signup(fullName, email, password));
-      toast.success('Signup successful!');
       navigate('/dashboard');
     } catch (error) {
-      toast.error('Signup failed: ' + error.message);
+      console.error('Signup failed: ' + error.message);
     } finally {
       setLoading(false);
     }

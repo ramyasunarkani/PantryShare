@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { toast } from 'react-toastify';
 import { login } from '../Store/auth-actions';
 import NavBar from '../components/NavBar';
 
@@ -18,10 +17,9 @@ const Login = () => {
     setLoading(true);
     try {
       await dispatch(login(email, password));
-      toast.success('Login successful!');
       navigate('/dashboard');
     } catch (error) {
-      toast.error('Login failed: ' + error.message);
+      console.log(error);
     } finally {
       setLoading(false);
     }

@@ -1,5 +1,6 @@
 import api from './api';
 import { authActions } from './auth';
+import { toast } from 'react-toastify';
 
 export const signup = (fullName, email, password) => {
   return async (dispatch) => {
@@ -15,7 +16,11 @@ export const signup = (fullName, email, password) => {
         userId: user.id,  
         location: user.location || { lat: null, lng: null },
       }));
+       toast.success('Signup successful!');
+      
     } catch (error) {
+        toast.error('Signup failed: ' + error.message);
+
       console.error('Signup error:', error.response?.data?.message || error.message);
     }
   };
@@ -35,7 +40,11 @@ export const login = (email, password) => {
         userId: user.id,
         location: user.location || { lat: null, lng: null },
       }));
+             toast.success('Login successful!');
+
     } catch (error) {
+              toast.error('Login failed: ' + error.message);
+
       console.error('Login error:', error.response?.data?.message || error.message);
     }
   };
