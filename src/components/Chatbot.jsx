@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import Modal from "./UI/Modal";
 import { BsRobot } from "react-icons/bs";
+import api from './api';
+
 
 const Chatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -19,7 +21,7 @@ const Chatbot = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:3000/chatbot/message", {
+      const res = await api.post("/chatbot/message", {
         message: input,
       });
       const botReply = res.data.reply;
