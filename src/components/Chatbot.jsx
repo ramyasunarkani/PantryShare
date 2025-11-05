@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Modal from "./UI/Modal";
 import { BsRobot } from "react-icons/bs";
-import api from './api';
+import api from '../Store/api';
 
 
 const Chatbot = () => {

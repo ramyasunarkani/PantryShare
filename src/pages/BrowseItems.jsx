@@ -114,7 +114,7 @@ const filteredItems = items.filter((item) => {
                       <div className="flex justify-between items-center">
                         <button
                           onClick={() => navigate(`/item/${item._id}`)}
-                          className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-md text-sm"
+                          className="px-4 py-2  text-green-950 cursor-pointer"
                         >
                           View Details
                         </button>

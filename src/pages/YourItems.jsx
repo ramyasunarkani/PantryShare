@@ -67,14 +67,12 @@ const YourItems = () => {
             className="bg-white shadow-md rounded-xl overflow-hidden border border-gray-200 hover:shadow-lg transition-all duration-300"
           >
             <div className="flex flex-col sm:flex-row">
-              {/* 📸 Image */}
               <img
                 src={item.imageUrl || "https://via.placeholder.com/400x250"}
                 alt={item.title}
                 className="w-full sm:w-1/3 h-52 sm:h-56 object-cover"
               />
 
-              {/* 📝 Content */}
               <div className="flex-1 p-4 sm:p-6">
                 <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-2">
                   {item.title}
@@ -90,17 +88,16 @@ const YourItems = () => {
                   {new Date(item.expiryDate).toLocaleString()}
                 </p>
 
-                {/* 🛠️ Actions */}
                 <div className="flex flex-wrap justify-end gap-3 mt-4">
                   <button
                     onClick={() => handleEditClick(item)}
-                    className="px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm sm:text-base transition-colors"
+                    className="px-3 sm:px-4 py-2   text-blue-800 text-sm cursor-pointer"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(item._id)}
-                    className="px-3 sm:px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm sm:text-base transition-colors"
+                    className="px-3 sm:px-4 py-2  text-red-800 cursor-pointer"
                   >
                     Delete
                   </button>
@@ -111,7 +108,6 @@ const YourItems = () => {
         ))}
       </div>
 
-      {/* ✏️ Edit Modal */}
       {editingItem && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/60 z-50 px-4">
           <div className="bg-white p-5 sm:p-6 rounded-2xl w-full max-w-md shadow-2xl overflow-y-auto max-h-[90vh]">

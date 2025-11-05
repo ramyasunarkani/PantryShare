@@ -14,9 +14,12 @@ const Sidebar = () => {
   if (!userLogged) return null;
 
   const handleLogOut = () => {
-    dispatch(logout());
+  dispatch(logout());
+  setTimeout(() => {
     navigate("/");
-  };
+  }, 100);
+};
+
 
   const closeModal = () => setModalType(null);
 

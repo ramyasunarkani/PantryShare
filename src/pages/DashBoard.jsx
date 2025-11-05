@@ -18,7 +18,7 @@ const Dashboard = () => {
 
       <main className="flex-1 md:ml-64 p-4 md:p-6 overflow-y-auto h-screen">
         <button
-          className="md:hidden mb-4 bg-green-600 text-white px-3 py-2 rounded-md flex items-center gap-2"
+          className="md:hidden mb-4 bg-green-800 text-white px-3 py-2 flex items-center gap-2"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           <Menu size={20} />
