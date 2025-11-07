@@ -192,7 +192,7 @@ const ItemDetails = () => {
             </p>
           )}
 
-          <div className="flex justify-end mt-8 pb-10 gap-4">
+          <div className="flex justify-between mt-8 pb-10 gap-4">
             {isExpired ? (
               <button
                 disabled
