@@ -1,12 +1,13 @@
 import React, { useState } from "react";
-import axios from "axios";
-import Modal from "./UI/Modal";
+import api from "../Store/api";
 import { BsRobot } from "react-icons/bs";
-import api from '../Store/api';
-
+import { useDispatch, useSelector } from "react-redux";
+import { openChatbot, closeChatbot } from "../Store/chatbot-slice";
 
 const Chatbot = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const isOpen = useSelector((state) => state.chatbot.isOpen);
+
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hi 👋! I'm PantryBot. How can I help you today?" },
   ]);
@@ -21,9 +22,7 @@ const Chatbot = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/chatbot/message", {
-        message: input,
-      });
+      const res = await api.post("/chatbot/message", { message: input });
       const botReply = res.data.reply;
       setMessages((prev) => [...prev, { sender: "bot", text: botReply }]);
     } catch (err) {
@@ -38,78 +37,146 @@ const Chatbot = () => {
 
   return (
     <>
-      <div className="fixed bottom-6 right-6 flex flex-col items-end z-50">
-        {!isOpen && (
-          <div className="mb-2 bg-white shadow-md px-3 py-1 text-sm text-gray-700 rounded-full animate-bounce">
-            Need help? 💬
-          </div>
-        )}
-
+      {!isOpen && (
         <button
-          onClick={() => setIsOpen(true)}
-          className="bg-gradient-to-r from-indigo-500 to-blue-500 hover:scale-110 transition-transform duration-300 rounded-full p-4 shadow-lg flex items-center justify-center"
+          onClick={() => dispatch(openChatbot())}
+          style={{
+            position: "fixed",
+            bottom: "25px",
+            right: "25px",
+            backgroundColor: "#4F46E5",
+            color: "#fff",
+            border: "none",
+            borderRadius: "50%",
+            width: "60px",
+            height: "60px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            boxShadow: "0 4px 8px rgba(0,0,0,0.3)",
+            zIndex: 1000,
+          }}
         >
-          <BsRobot size={26} className="text-white" />
+          <BsRobot size={30} />
         </button>
-      </div>
+      )}
 
       {isOpen && (
-        <Modal onClose={() => setIsOpen(false)}>
-          <div className="flex flex-col">
-            <div className="flex justify-between items-center mb-2 border-b pb-2">
-              <h2 className="text-xl font-bold text-primary">PantryBot 🤖</h2>
-              <button
-                className="btn btn-sm btn-ghost text-xl"
-                onClick={() => setIsOpen(false)}
-              >
-                ✖
-              </button>
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            right: 0,
+            width: "30%",
+            height: "100vh",
+            backgroundColor: "#f9f9f9",
+            borderLeft: "2px solid #ddd",
+            display: "flex",
+            flexDirection: "column",
+            padding: "15px",
+            boxShadow: "-2px 0 8px rgba(0,0,0,0.1)",
+            zIndex: 999,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "10px",
+              borderBottom: "1px solid #ddd",
+              paddingBottom: "8px",
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <BsRobot size={22} color="#4F46E5" />
+              <h2 className="text-lg font-bold text-indigo-600">PantryBot</h2>
             </div>
-
-            <div className="border rounded-lg p-3 bg-gray-50 h-80 overflow-y-auto mb-2">
-              {messages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex ${
-                    msg.sender === "user" ? "justify-end" : "justify-start"
-                  } mb-2`}
-                >
-                  <div
-                    className={`px-3 py-2 rounded-lg max-w-[75%] ${
-                      msg.sender === "user"
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-300 text-gray-800"
-                    }`}
-                  >
-                    {msg.text}
-                  </div>
-                </div>
-              ))}
-              {loading && (
-                <p className="text-sm text-gray-400 italic">
-                  PantryBot is typing...
-                </p>
-              )}
-            </div>
-
-            <div className="flex">
-              <input
-                type="text"
-                placeholder="Type a message..."
-                className="input input-bordered input-sm flex-1"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-              />
-              <button
-                className="btn btn-sm btn-primary ml-2"
-                onClick={handleSend}
-              >
-                Send
-              </button>
-            </div>
+            <button
+              onClick={() => dispatch(closeChatbot())}
+              style={{
+                border: "none",
+                background: "transparent",
+                fontSize: "18px",
+                cursor: "pointer",
+                color: "#555",
+              }}
+            >
+              ✕
+            </button>
           </div>
-        </Modal>
+
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              backgroundColor: "#fff",
+              borderRadius: "10px",
+              padding: "10px",
+              marginBottom: "10px",
+            }}
+          >
+            {messages.map((msg, idx) => (
+              <div
+                key={idx}
+                style={{
+                  textAlign: msg.sender === "user" ? "right" : "left",
+                  marginBottom: "8px",
+                }}
+              >
+                <span
+                  style={{
+                    display: "inline-block",
+                    padding: "8px 12px",
+                    borderRadius: "10px",
+                    backgroundColor:
+                      msg.sender === "user" ? "#4F46E5" : "#E5E7EB",
+                    color: msg.sender === "user" ? "#fff" : "#111",
+                    maxWidth: "75%",
+                  }}
+                >
+                  {msg.text}
+                </span>
+              </div>
+            ))}
+            {loading && (
+              <p style={{ fontSize: "12px", color: "#888" }}>
+                PantryBot is typing...
+              </p>
+            )}
+          </div>
+
+          <div style={{ display: "flex" }}>
+            <input
+              type="text"
+              placeholder="Type a message..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSend()}
+              style={{
+                flex: 1,
+                padding: "8px",
+                border: "1px solid #ccc",
+                borderRadius: "6px",
+              }}
+            />
+            <button
+              onClick={handleSend}
+              style={{
+                marginLeft: "8px",
+                backgroundColor: "#4F46E5",
+                color: "white",
+                border: "none",
+                padding: "8px 14px",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
+              Send
+            </button>
+          </div>
+        </div>
       )}
     </>
   );

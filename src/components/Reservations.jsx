@@ -13,7 +13,6 @@ const Reservations = () => {
     (state) => state.reservation || {}
   );
   const authUser = useSelector((state) => state.auth);
-
   const [selectedChatItem, setSelectedChatItem] = useState(null);
 
   useEffect(() => {
@@ -71,7 +70,7 @@ const Reservations = () => {
                   <strong>Reserved by:</strong> {r.userId?.fullName}
                 </p>
 
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-2">
                     <label className="text-sm font-medium text-gray-700">
                       Status:
@@ -98,21 +97,21 @@ const Reservations = () => {
                     </select>
                   </div>
 
+                  <p className="text-xs text-gray-500">
+                    Expires:{" "}
+                    {r.itemId?.expiryDate
+                      ? new Date(r.itemId.expiryDate).toLocaleString()
+                      : "N/A"}
+                  </p>
+
                   <button
                     onClick={() => setSelectedChatItem(r)}
-                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium"
+                    className="flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-medium mt-1"
                   >
                     <MessageCircle size={16} />
                     Chat with Reserver
                   </button>
                 </div>
-
-                <p className="text-xs text-gray-400">
-                  Expires:{" "}
-                  {r.itemId?.expiryDate
-                    ? new Date(r.itemId.expiryDate).toLocaleString()
-                    : "N/A"}
-                </p>
               </div>
             </div>
           </div>
