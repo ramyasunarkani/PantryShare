@@ -155,6 +155,7 @@ const Chatbot = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSend()}
               style={{
+                color:"black",
                 flex: 1,
                 padding: "8px",
                 border: "1px solid #ccc",
