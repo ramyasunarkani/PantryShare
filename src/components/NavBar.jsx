@@ -5,13 +5,11 @@ import { useNavigate } from "react-router-dom";
 const NavBar = () => {
   const navigate = useNavigate();
   const { userLogged, name, photo } = useSelector((state) => state.auth);
-  const isChatOpen = useSelector((state) => state.chatbot.isOpen);
+
   return (
     <>
       <div
-       className={`h-16 flex justify-between items-center px-6 border-b shadow-md fixed top-0 left-0 z-10 bg-gradient-to-r from-indigo-500 to-teal-400 transition-all duration-500 ease-in-out ${
-          isChatOpen ? "w-[70%]" : "w-full"
-        }`}
+        className="h-16 flex justify-between items-center px-6 border-b shadow-md fixed top-0 left-0 z-10 bg-gradient-to-r from-indigo-500 to-teal-400 transition-all duration-500 ease-in-out w-full"
       >
         <div
           className="flex items-center gap-1 cursor-pointer"

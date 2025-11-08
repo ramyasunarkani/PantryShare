@@ -19,7 +19,6 @@ import { setupChatSocketListener } from "./Store/chat-actions";
 const App = () => {
   const dispatch = useDispatch();
   const userLogged = useSelector((state) => state.auth.userLogged);
-  const isChatOpen = useSelector((state) => state.chatbot.isOpen);
 
   useEffect(() => {
     if (userLogged) {
@@ -45,11 +44,7 @@ const App = () => {
   return (
     <>
       <ToastContainer position="top-right" autoClose={3000} theme="colored" />
-
-      <div  style={{
-          width: isChatOpen ? "70%" : "100%", 
-          transition: "width 0.3s ease",
-        }}>
+      
         <Routes>
         <Route path="/" element={<PublicRoute element={<Header />} />} />
         <Route path="/login" element={<PublicRoute element={<Login />} />} />
@@ -70,7 +65,6 @@ const App = () => {
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-      </div>
       <Chatbot />
     </>
   );
