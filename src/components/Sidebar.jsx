@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import AddItemForm from "./AddItemForm";
 import Modal from "./UI/Modal";
 
-const Sidebar = () => {
+const Sidebar = ({ closeSidebar }) => {
   const { userLogged, name, email, photo } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -14,12 +14,11 @@ const Sidebar = () => {
   if (!userLogged) return null;
 
   const handleLogOut = () => {
-  dispatch(logout());
-  setTimeout(() => {
-    navigate("/");
-  }, 100);
-};
-
+    dispatch(logout());
+    setTimeout(() => {
+      navigate("/");
+    }, 100);
+  };
 
   const closeModal = () => setModalType(null);
 
@@ -33,7 +32,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-64 bg-white shadow-lg flex flex-col justify-between p-4 z-50">
+    <aside className="fixed top-0 left-0 h-screen w-64 bg-white shadow-lg flex flex-col justify-between p-4 z-50 overflow-hidden">
       <div>
         <div className="flex flex-col items-center pb-6 border-b mb-4">
           <div className="avatar mb-2">
@@ -49,7 +48,10 @@ const Sidebar = () => {
           {menuItems.map((item, idx) => (
             <button
               key={idx}
-              onClick={item.action}
+              onClick={() => {
+                item.action();
+                if (closeSidebar) closeSidebar(); 
+              }}
               className="btn btn-ghost justify-start text-gray-700 hover:text-green-600 hover:bg-green-50 transition-all rounded-xl"
             >
               {item.label}
